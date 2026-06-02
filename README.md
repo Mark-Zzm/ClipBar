@@ -1,20 +1,43 @@
 # ClipBar
 
-ClipBar 是一个 SwiftUI 原生 macOS 菜单栏剪切板管理工具。第一版支持后台记录文本和图片、搜索文本历史、固定最多 9 条常用内容，并可选择复制回剪切板或自动粘贴到前台 App。
+ClipBar 是一个 SwiftUI 原生 macOS 菜单栏剪切板管理工具。它支持后台记录文本和图片、搜索文本历史、固定最多 9 条常用内容，并可选择复制回剪切板或自动粘贴到前台 App。
 
-## 长期使用安装
+## 发布状态
 
-先确认完整 Xcode 环境可用：
+这是一个开源源码发布版本。当前仓库提供完整源码和本地构建脚本，但暂不提供 Developer ID 签名和 Apple notarization 公证后的安装包。
+
+因此：
+
+- 开发者可以 clone 源码后自行构建和安装。
+- 未签名或临时签名的 App 可能被 macOS Gatekeeper 拦截。
+- 面向普通用户的正式下载包需要后续完成 Developer ID 签名、公证和打包流程。
+
+## 系统要求
+
+- macOS 14 或更高版本
+- Xcode / Swift 6 toolchain
+- 如需自动粘贴到前台 App，需要授予 macOS 辅助功能权限
+
+确认 Xcode 环境：
 
 ```bash
 xcode-select -p
 xcodebuild -version
 ```
 
-`xcode-select -p` 应该输出类似：
+`xcode-select -p` 应输出类似：
 
 ```text
 /Applications/Xcode.app/Contents/Developer
+```
+
+## 从源码安装
+
+克隆仓库后进入项目目录：
+
+```bash
+git clone https://github.com/Mark-Zzm/ClipBar.git
+cd ClipBar
 ```
 
 第一次安装到“应用程序”：
@@ -41,10 +64,10 @@ Scripts/update_clipbar_app.sh
 
 ## 开发构建
 
-普通构建：
+SwiftPM 构建：
 
 ```bash
-xcodebuild -scheme ClipBar -destination 'platform=macOS' build
+swift build
 ```
 
 手动生成项目目录内的 App 包：
@@ -82,13 +105,25 @@ swift run ClipBar
 - 直接粘贴需要 macOS 辅助功能权限。长期使用时请给 `/Applications/ClipBar.app` 授权；授权后退出并重新打开 ClipBar。
 - 点击主面板左下角“退出”可以完全结束 ClipBar。
 
+## 隐私与数据
+
+ClipBar 是本地剪切板工具，当前版本不提供云同步，也不会主动上传剪切板内容。
+
+- 文本和图片历史保存在本机 Application Support 目录。
+- 默认保存最近 1000 条普通历史。
+- 固定内容不因普通历史清理而删除。
+- 图片记录会在本机保存对应文件引用。
+- 自动粘贴需要辅助功能权限；没有权限时会降级为只复制到剪切板。
+
+剪切板内容可能包含密码、验证码、密钥、私人图片或其他敏感信息。长期运行前请确认你能接受本地保存剪切板历史这一行为。
+
 ## 验证
 
-当前机器的 Command Line Tools 没有可用的 `Testing`/`XCTest` 模块，所以项目提供了一个独立验证目标：
+项目提供了一个独立验证目标：
 
 ```bash
 swift run CoreChecks
-xcodebuild -scheme ClipBar -destination 'platform=macOS' build
+swift build
 Scripts/build_clipbar_app.sh
 ```
 
@@ -101,3 +136,15 @@ Scripts/build_clipbar_app.sh
 - 默认保存最近 1000 条普通历史，固定内容不因普通历史清理而删除。
 - 自动粘贴需要 macOS 辅助功能权限；没有权限时会降级为复制到剪切板。
 - 暂不包含签名分发、App Store、云同步、OCR、富文本或文件复制记录。
+
+## 反馈
+
+Bug、建议和功能请求请通过 GitHub Issues 提交：
+
+```text
+https://github.com/Mark-Zzm/ClipBar/issues
+```
+
+## License
+
+ClipBar is released under the MIT License. See [LICENSE](LICENSE) for details.
